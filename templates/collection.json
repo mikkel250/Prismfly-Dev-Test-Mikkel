@@ -1,1 +1,137 @@
-{"sections":{"banner":{"type":"main-collection-banner","settings":{"show_collection_description":true,"show_collection_image":false,"color_scheme":"background-1"}},"product-grid":{"type":"main-collection-product-grid","settings":{"products_per_page":16,"columns_desktop":4,"image_ratio":"adapt","show_secondary_image":false,"show_vendor":false,"show_rating":false,"enable_filtering":true,"enable_sorting":true,"columns_mobile":"2","padding_top":36,"padding_bottom":36}}},"order":["banner","product-grid"]}
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "background-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "image_ratio": "adapt",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "enable_quick_add": false,
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "16570474377d4b4cb3": {
+      "type": "collection-list",
+      "blocks": {
+        "16570474370441dd2a-0": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "mens"
+          }
+        },
+        "16570474370441dd2a-1": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "mens-1"
+          }
+        },
+        "16570474370441dd2a-2": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": ""
+          }
+        }
+      },
+      "block_order": [
+        "16570474370441dd2a-0",
+        "16570474370441dd2a-1",
+        "16570474370441dd2a-2"
+      ],
+      "settings": {
+        "title": "Collections",
+        "heading_size": "h1",
+        "image_ratio": "square",
+        "columns_desktop": 3,
+        "color_scheme": "background-1",
+        "show_view_all": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "165704745366b3cfc2": {
+      "type": "collapsible-content",
+      "blocks": {
+        "1657047453c9bc3dcb-0": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Collapsible row",
+            "icon": "check_mark",
+            "row_content": "",
+            "page": ""
+          }
+        },
+        "1657047453c9bc3dcb-1": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Collapsible row",
+            "icon": "check_mark",
+            "row_content": "",
+            "page": ""
+          }
+        },
+        "1657047453c9bc3dcb-2": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Collapsible row",
+            "icon": "check_mark",
+            "row_content": "",
+            "page": ""
+          }
+        },
+        "1657047453c9bc3dcb-3": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Collapsible row",
+            "icon": "check_mark",
+            "row_content": "",
+            "page": ""
+          }
+        }
+      },
+      "block_order": [
+        "1657047453c9bc3dcb-0",
+        "1657047453c9bc3dcb-1",
+        "1657047453c9bc3dcb-2",
+        "1657047453c9bc3dcb-3"
+      ],
+      "settings": {
+        "caption": "",
+        "heading": "Collapsible content",
+        "heading_size": "h1",
+        "heading_alignment": "center",
+        "layout": "none",
+        "color_scheme": "background-1",
+        "container_color_scheme": "background-2",
+        "open_first_collapsible_row": false,
+        "image_ratio": "adapt",
+        "desktop_layout": "image_second",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid",
+    "16570474377d4b4cb3",
+    "165704745366b3cfc2"
+  ]
+}
