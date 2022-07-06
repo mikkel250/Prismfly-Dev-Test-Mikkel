@@ -26,35 +26,35 @@
         "padding_bottom": 36
       }
     },
-    "16570474377d4b4cb3": {
-      "type": "collection-list",
+    "1657133669fc23407c": {
+      "type": "collection-list-tabs",
       "blocks": {
-        "16570474370441dd2a-0": {
+        "16571336693618a576-0": {
           "type": "featured_collection",
           "settings": {
-            "collection": "mens"
+            "collection": ""
           }
         },
-        "16570474370441dd2a-1": {
+        "16571336693618a576-1": {
           "type": "featured_collection",
           "settings": {
-            "collection": "mens-1"
+            "collection": ""
           }
         },
-        "16570474370441dd2a-2": {
+        "16571336693618a576-2": {
           "type": "featured_collection",
           "settings": {
-            "collection": "bracelets"
+            "collection": ""
           }
         }
       },
       "block_order": [
-        "16570474370441dd2a-0",
-        "16570474370441dd2a-1",
-        "16570474370441dd2a-2"
+        "16571336693618a576-0",
+        "16571336693618a576-1",
+        "16571336693618a576-2"
       ],
       "settings": {
-        "title": "Collections",
+        "title": "Collections with filter",
         "heading_size": "h1",
         "image_ratio": "square",
         "columns_desktop": 3,
@@ -70,6 +70,6 @@
   "order": [
     "banner",
     "product-grid",
-    "16570474377d4b4cb3"
+    "1657133669fc23407c"
   ]
 }
