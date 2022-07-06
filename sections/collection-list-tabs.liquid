@@ -145,7 +145,7 @@
       {%- if section.settings.filter_by_tag_title != blank  -%}
           <h3 class="titleSidebar">
               <span>{{ section.settings.filter_by_tag_title }}</span>
-              <a href="javascript:void(0)" class="velaClearAll{% if noFilter %} hidden{% endif %}">{{ 'collections.sidebar.clear_all' | t }}</a>
+              <a href="javascript:void(0)" class="velaClearAll{% if noFilter %} hidden{% endif %}">clear</a>
           </h3>
       {%- endif -%}
 <!--       		I killed velaContent in order to match the behavior of filters as in Category -->
@@ -157,7 +157,7 @@
               <div class="ajaxFilter velaBlock">
                   <h4 class="titleSidebar ajaxFilterTitle">
                       <span>Filter by {{ groupTagTitle }}</span>
-                      <a href="javascript:void(0)" class="velaClear" style="display:none;">{{ 'collections.sidebar.clear' | t }}</a>
+                      <a href="javascript:void(0)" class="velaClear" style="display:none;">clear</a>
                   </h4>
 <!--                   I added velaContent class in order to do toggling in mobile - Oggi -->
                   <ul class="listFilter {{ classFilter }}  list-unstyled">
