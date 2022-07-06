@@ -77,125 +77,55 @@
   </div>
 </div>
 
-<!-- Sidebarfilter begin -->
-{% comment %}
-{%- if collection.all_tags.size > 0 -%}
-{% endcomment %}
-{%- if current_tags == blank -%}
-  {%- assign noFilter = true -%}
-{%- else -%}
-  {%- assign noFilter = false -%}
-{%- endif -%}
-  {%- if template.name == 'collection' and collection.all_tags.size > 0 -%}
-      {%- assign strListTags = '' -%}
-      {% for tag in collection.all_tags %}
-          {%- if tag contains '_' -%}
-              {% capture strListTags %}{% unless strListTags == blank  %}{{ strListTags }}|{% endunless %}{{ tag | split: '_' | first }}{% endcapture %}
+<!-- Filters -->
+<div id="sidebarAjaxFilter" class="velaFilter velaBlock">
+  <h3 class="titleSidebar">
+      <span>{{ section.settings.filter_by_tag_title }}</span>
+      <a href="javascript:void(0)" class="velaClearAll{% if noFilter %} hidden{% endif %}">{{ 'collections.sidebar.clear_all' | t }}</a>
+  </h3>
+
+
+  <div class="velaContent">
+      {% for groupTagTitle in groupTags %}
+          {%- if groupTagTitle contains 'Size' -%}
+              {%- assign classFilter = 'listFilterSize' -%}
           {%- endif -%}
-      {% endfor %}
-      {%- assign groupTags = strListTags | split: '|' | uniq -%}
-  {%- endif -%}
-  {% if section.settings.sidebar_filtervendor_enable %}
-  <div class="velaFilter velaBlock">
-      <h3 class="titleSidebar">{{ section.settings.sidebar_filtervendor_title }}</h3>
-      <div class="velaContent">
-          <ul class="listSidebar list-unstyled">
-              {% assign itemArray = section.settings.sidebar_filtervendor_list | split:"," %}
-              {% for itemVendor in itemArray %}
-                  {% if shop.vendors contains itemVendor %}
-                      {% if collection.current_vendor == itemVendor %}
-                          <li class="active">
-                              {{ itemVendor | link_to_vendor }}
-                          </li>
-                      {% else %}
-                          <li>
-                              {{ itemVendor | link_to_vendor }}
-                          </li>
-                      {% endif %}
-                  {% endif %}
-              {% endfor %}
-          </ul>
-      </div>
-  </div>
-{% endif %}
-
-  <div class="velaFilter velaBlock">
-      <h3 class="titleSidebar">{{ section.settings.sidebar_filtertype_title }}</h3>
-      <div class="velaContent">
-          <ul class="listSidebar list-unstyled">
-              {% assign itemArray = section.settings.sidebar_filtertype_list | split:"," %}
-              {% for itemType in itemArray %}
-                  {% if shop.types contains itemType %}
-                      {% if collection.current_vendor == itemType %}
-                          <li class="active">
-                              {{ itemType | link_to_type }}
-                          </li>
-                      {% else %}
-                          <li>
-                              {{ itemType | link_to_type }}
-                          </li>
-                      {% endif %}
-                  {% endif %}
-              {% endfor %}
-          </ul>
-      </div>
-  </div>
-
-  <div id="sidebarAjaxFilter" class="velaFilter velaBlock">
-      {%- if section.settings.filter_by_tag_title != blank  -%}
-          <h3 class="titleSidebar">
-              <span>{{ section.settings.filter_by_tag_title }}</span>
-              <a href="javascript:void(0)" class="velaClearAll{% if noFilter %} hidden{% endif %}">clear</a>
-          </h3>
-      {%- endif -%}
-<!--       		I killed velaContent in order to match the behavior of filters as in Category -->
-      <div class="velaContent">
-          {% for groupTagTitle in groupTags %}
-              {%- if groupTagTitle contains 'Size' -%}
-                  {%- assign classFilter = 'listFilterSize' -%}
-              {%- endif -%}
-              <div class="ajaxFilter velaBlock">
-                  <h4 class="titleSidebar ajaxFilterTitle">
-                      <span>Filter by {{ groupTagTitle }}</span>
-                      <a href="javascript:void(0)" class="velaClear" style="display:none;">clear</a>
-                  </h4>
-<!--                   I added velaContent class in order to do toggling in mobile - Oggi -->
-                  <ul class="listFilter {{ classFilter }}  list-unstyled">
-                      {% for tag in collection.all_tags %}
-                          {%- assign cat = tag | split: '_' | first -%}
-                          {%- assign catDowncase = cat | downcase -%}
-                          {%- if cat != tag and groupTagTitle == cat -%}
-                              {%- if catDowncase == 'color' or catDowncase == 'colour' -%}
-                                  {% capture imageColor %}{{ tag | remove_first: groupTagTitle | remove_first: '_' | handle }}{% endcapture %}
-                                  {% capture colorImage %}{{ imageColor }}.png{% endcapture %}
-                                  <li class="filterColor{% if current_tags contains tag %} active{% endif %}" data-filter="{{ tag | handle }}">
-                                      <a href="javascript:void(0)" title="{{ imageColor }}" style="background-color: {{ imageColor }}">
-                                          <img class="img-responsive" alt="{{ tag | remove_first: groupTagTitle | remove_first: '_' | escape }}" src="{{ colorImage | file_img_url:'master' }}"  onError="this.onerror=null;this.src='{{'color_default.png' | asset_img_url: 'icon'}}';" />
-                                      </a>
+          <div class="ajaxFilter velaBlock">
+              <h4 class="titleSidebar ajaxFilterTitle">
+                  <span>Filter by {{ groupTagTitle }}</span>
+                  <a href="javascript:void(0)" class="velaClear" style="display:none;">{{ 'collections.sidebar.clear' | t }}</a>
+              </h4>
+              <ul class="listFilter {{ classFilter }}  list-unstyled">
+                  {% for tag in collection.all_tags %}
+                      {%- assign cat = tag | split: '_' | first -%}
+                      {%- assign catDowncase = cat | downcase -%}
+                      {%- if cat != tag and groupTagTitle == cat -%}
+                          {%- if catDowncase == 'color' or catDowncase == 'colour' -%}
+                              {% capture imageColor %}{{ tag | remove_first: groupTagTitle | remove_first: '_' | handle }}{% endcapture %}
+                              {% capture colorImage %}{{ imageColor }}.png{% endcapture %}
+                              <li class="filterColor{% if current_tags contains tag %} active{% endif %}" data-filter="{{ tag | handle }}">
+                                  <a href="javascript:void(0)" title="{{ imageColor }}" style="background-color: {{ imageColor }}">
+                                      <img class="img-responsive" alt="{{ tag | remove_first: groupTagTitle | remove_first: '_' | escape }}" src="{{ colorImage | file_img_url:'master' }}"  onError="this.onerror=null;this.src='{{'color_default.png' | asset_img_url: 'icon'}}';" />
+                                  </a>
+                              </li>
+                          {%- else -%}
+                              {%- if current_tags contains tag -%}
+                                  <li class="filterItem active" data-filter="{{ tag | handle }}">
+                                      {{ tag | remove_first: groupTagTitle | remove_first: '_' | link_to_remove_tag: tag }}
                                   </li>
                               {%- else -%}
-                                  {%- if current_tags contains tag -%}
-                                      <li class="filterItem active" data-filter="{{ tag | handle }}">
-                                          {{ tag | remove_first: groupTagTitle | remove_first: '_' | link_to_remove_tag: tag }}
-                                      </li>
-                                  {%- else -%}
-                                      <li class="filterItem" data-filter="{{ tag | handle }}">
-                                          {{ tag | remove_first: groupTagTitle | remove_first: '_' | link_to_add_tag: tag }}
-                                      </li>
-                                  {%- endif -%}
+                                  <li class="filterItem" data-filter="{{ tag | handle }}">
+                                      {{ tag | remove_first: groupTagTitle | remove_first: '_' | link_to_add_tag: tag }}
+                                  </li>
                               {%- endif -%}
                           {%- endif -%}
-                      {% endfor %}
-                  </ul>
-              </div>
-          {% endfor %}
-      </div>
+                      {%- endif -%}
+                  {% endfor %}
+              </ul>
+          </div>
+      {% endfor %}
   </div>
-{% comment %}
-{%- endif -%}
-{% endcomment %}
-<!-- Sidebarfilter end -->
-
+</div>
 
 {% schema %}
 {
