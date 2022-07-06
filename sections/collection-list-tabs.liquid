@@ -78,6 +78,8 @@
 </div>
 
 <!-- Sidebarfilter begin -->
+{% for tag in collection.all_tags %}
+<p>{{tag}}</p>
 
 {%- if collection.all_tags.size > 0 -%}
 {%- if current_tags == blank -%}
