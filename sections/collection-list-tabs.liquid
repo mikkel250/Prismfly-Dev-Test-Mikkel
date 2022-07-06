@@ -78,9 +78,8 @@
 </div>
 
 <!-- Sidebarfilter begin -->
-{% comment %}
+
 {%- if collection.all_tags.size > 0 -%}
-{% endcomment %}
 {%- if current_tags == blank -%}
   {%- assign noFilter = true -%}
 {%- else -%}
@@ -191,9 +190,9 @@
           {% endfor %}
       </div>
   </div>
-  {% comment %}
-  {%- endif -%}
-  {% endcomment %}
+
+{%- endif -%}
+
 <!-- Sidebarfilter end -->
 
 
