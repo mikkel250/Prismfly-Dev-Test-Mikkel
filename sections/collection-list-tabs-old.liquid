@@ -1,0 +1,478 @@
+{{ 'section-collection-list.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+
+<link rel="stylesheet" href="{{ 'component-slider.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript>{{ 'component-slider.css' | asset_url | stylesheet_tag }}</noscript>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign columns_mobile_int = section.settings.columns_mobile | plus: 0
+  assign show_mobile_slider = false
+  if section.settings.swipe_on_mobile and section.blocks.size > columns_mobile_int
+    assign show_mobile_slider = true
+  endif
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="collection-list-wrapper page-width isolate{% if show_mobile_slider %} page-width-desktop{% endif %}{% if section.settings.title == blank %} no-heading{% endif %}{% if section.settings.show_view_all == false or section.blocks.size > collections.size %} no-mobile-link{% endif %} section-{{ section.id }}-padding">
+    {%- unless section.settings.title == blank -%}
+      <div class="title-wrapper-with-link{% if show_mobile_slider %} title-wrapper--self-padded-tablet-down{% else %} title-wrapper--self-padded-mobile{% endif %} title-wrapper--no-top-margin">
+        <h2 id="SectionHeading-{{ section.id }}" class="collection-list-title {{ section.settings.heading_size }}">{{ section.settings.title | escape }}</h2>
+  
+        {%- if section.settings.show_view_all and show_mobile_slider -%}
+          <a href="{{ routes.collections_url }}" id="ViewAll-{{ section.id }}" class="link underlined-link large-up-hide" aria-labelledby="ViewAll-{{ section.id }} SectionHeading-{{ section.id }}">{{ 'sections.collection_list.view_all' | t }}</a>
+        {%- endif -%}
+      </div>
+    {%- endunless -%}
+  
+    <slider-component class="slider-mobile-gutter">
+      <ul class="collection-list contains-card{% if settings.card_style == 'standard' %} contains-card--standard{% endif %} grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down{% if section.settings.swipe_on_mobile %} slider slider--tablet grid--peek{% endif %} collection-list--{{ section.blocks.size }}-items"
+        id="Slider-{{ section.id }}"
+        role="list"
+      >
+        {%- liquid
+          assign columns = section.blocks.size
+          if columns > 3
+            assign columns = 3
+          endif
+        -%}
+        {%- for block in section.blocks -%}
+          <li id="Slide-{{ section.id }}-{{ forloop.index }}" class="collection-list__item grid__item{% if show_mobile_slider %} slider__slide{% endif %}{% if block.settings.collection.featured_image == nil %} collection-list__item--no-media{% endif %}" {{ block.shopify_attributes }}>
+            {% render 'card-collection', card_collection: block.settings.collection , media_aspect_ratio: section.settings.image_ratio, columns: columns %}
+          </li>
+        {%- endfor -%}
+      </ul>
+      {%- if show_mobile_slider -%}
+        <div class="slider-buttons no-js-hidden">
+          <button type="button" class="slider-button slider-button--prev" name="previous" aria-label="{{ 'general.slider.previous_slide' | t }}">{% render 'icon-caret' %}</button>
+          <div class="slider-counter caption">
+            <span class="slider-counter--current">1</span>
+              <span aria-hidden="true"> / </span>
+              <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
+            <span class="slider-counter--total">{{ section.blocks.size }}</span>
+          </div>
+          <button type="button" class="slider-button slider-button--next" name="next" aria-label="{{ 'general.slider.next_slide' | t }}">{% render 'icon-caret' %}</button>
+        </div>
+      {%- endif -%}
+    </slider-component>
+  
+    {%- if section.settings.show_view_all and section.blocks.size < collections.size -%}
+      <div class="center collection-list-view-all{% if show_mobile_slider %} small-hide medium-hide{% endif %}">
+        <a href="{{ routes.collections_url }}" class="button" id="ViewAllButton-{{ section.id }}" aria-labelledby="ViewAllButton-{{ section.id }} SectionHeading-{{ section.id }}">{{ 'sections.collection_list.view_all' | t }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+<!-- JS FILTER  -->
+<ul class="clearfix">
+  <li class="clearfix filter">
+    <p>Shop by category</p>
+    <select class="coll-picker">
+      <option value="all">All</option>
+      {% for c in collections %}
+      {% unless c.handle == 'all' %}
+      {% if collection.handle == c.handle %}
+      <option value="{{ c.handle }}" selected>{{ c.title }}</option>
+      {% else %}
+      <option value="{{ c.handle }}">{{ c.title }}</option>
+      {% endif %}
+      {% endunless %}
+      {% endfor %}
+    </select>
+  </li>
+  <li class="clearfix filter">
+    {% assign tags = 'Red, Green, Blue' | replace: ' ,', ',' | replace: ', ', ',' | split: ',' %}
+    <p>Shop by color</p>
+    <select class="coll-filter">
+      <option value="">All</option>
+      {% for tag in tags %}
+      {% if current_tags contains tag %}
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+      {% elsif collection.all_tags contains tag %}
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+      {% endif %}
+      {% endfor %}
+    </select>
+  </li>
+  <li class="clearfix filter">
+    {% assign tags = 'Small, Medium, Large' | replace: ' ,', ',' | replace: ', ', ',' | split: ',' %}
+    <p>Shop by size</p>
+    <select class="coll-filter">
+      <option value="">All</option>
+      {% for tag in tags %}
+      {% if current_tags contains tag %}
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+      {% elsif collection.all_tags contains tag %}
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+      {% endif %}
+      {% endfor %}
+    </select>
+  </li>
+</ul>
+<!-- END JS FILTER -->
+
+
+<!-- Example collection filter display https://shopify.dev/themes/navigation-search/filtering/storefront-filtering/support-storefront-filtering -->
+<!-- THIS METHOD REFRESHES THE PAGE -->
+
+<!-- Sidebarfilter begin -->
+{% for tag in collection.all_tags %}
+<p>{{tag}}</p>
+{% endfor %}
+<!-- show filtered collection -->
+<!-- /collections/all?constraint=health-needs_bone-joint -->
+
+<!-- But some are collections by type, in which case it's -->
+<!-- /collections/all?constraint=type_capsules-tablets -->
+
+{%- if collection.all_tags.size > 0 -%}
+{%- if current_tags == blank -%}
+  {%- assign noFilter = true -%}
+{%- else -%}
+  {%- assign noFilter = false -%}
+{%- endif -%}
+  {%- if template.name == 'collection' and collection.all_tags.size > 0 -%}
+      {%- assign strListTags = '' -%}
+      {% for tag in collection.all_tags %}
+          {%- if tag contains '_' -%}
+              {% capture strListTags %}{% unless strListTags == blank  %}{{ strListTags }}|{% endunless %}{{ tag | split: '_' | first }}{% endcapture %}
+          {%- endif -%}
+      {% endfor %}
+      {%- assign groupTags = strListTags | split: '|' | uniq -%}
+  {%- endif -%}
+  {% if section.settings.sidebar_filtervendor_enable %}
+  <div class="velaFilter velaBlock">
+      <h3 class="titleSidebar">{{ section.settings.sidebar_filtervendor_title }}</h3>
+      <div class="velaContent">
+          <ul class="listSidebar list-unstyled">
+              {% assign itemArray = section.settings.sidebar_filtervendor_list | split:"," %}
+              {% for itemVendor in itemArray %}
+                  {% if shop.vendors contains itemVendor %}
+                      {% if collection.current_vendor == itemVendor %}
+                          <li class="active">
+                              {{ itemVendor | link_to_vendor }}
+                          </li>
+                      {% else %}
+                          <li>
+                              {{ itemVendor | link_to_vendor }}
+                          </li>
+                      {% endif %}
+                  {% endif %}
+              {% endfor %}
+          </ul>
+      </div>
+  </div>
+{% endif %}
+{% if section.settings.sidebar_filtertype_enable %}
+  <div class="velaFilter velaBlock">
+      <h3 class="titleSidebar">{{ section.settings.sidebar_filtertype_title }}</h3>
+      <div class="velaContent">
+          <ul class="listSidebar list-unstyled">
+              {% assign itemArray = section.settings.sidebar_filtertype_list | split:"," %}
+              {% for itemType in itemArray %}
+                  {% if shop.types contains itemType %}
+                      {% if collection.current_vendor == itemType %}
+                          <li class="active">
+                              {{ itemType | link_to_type }}
+                          </li>
+                      {% else %}
+                          <li>
+                              {{ itemType | link_to_type }}
+                          </li>
+                      {% endif %}
+                  {% endif %}
+              {% endfor %}
+          </ul>
+      </div>
+  </div>
+{% endif %}
+  <div id="sidebarAjaxFilter" class="velaFilter velaBlock">
+      {%- if section.settings.filter_by_tag_title != blank  -%}
+          <h3 class="titleSidebar">
+              <span>{{ section.settings.filter_by_tag_title }}</span>
+              <a href="javascript:void(0)" class="velaClearAll{% if noFilter %} hidden{% endif %}">clear</a>
+          </h3>
+      {%- endif -%}
+
+      <div class="velaContent">
+          {% for groupTagTitle in groupTags %}
+              {%- if groupTagTitle contains 'Size' -%}
+                  {%- assign classFilter = 'listFilterSize' -%}
+              {%- endif -%}
+              <div class="ajaxFilter velaBlock">
+                  <h4 class="titleSidebar ajaxFilterTitle">
+                      <span>Filter by {{ groupTagTitle }}</span>
+                      <a href="javascript:void(0)" class="velaClear" style="display:none;">clear</a>
+                  </h4>
+
+                  <ul class="listFilter {{ classFilter }}  list-unstyled">
+                      {% for tag in collection.all_tags %}
+                          {%- assign cat = tag | split: '_' | first -%}
+                          {%- assign catDowncase = cat | downcase -%}
+                          {%- if cat != tag and groupTagTitle == cat -%}
+                              {%- if catDowncase == 'color' or catDowncase == 'colour' -%}
+                                  {% capture imageColor %}{{ tag | remove_first: groupTagTitle | remove_first: '_' | handle }}{% endcapture %}
+                                  {% capture colorImage %}{{ imageColor }}.png{% endcapture %}
+                                  <li class="filterColor{% if current_tags contains tag %} active{% endif %}" data-filter="{{ tag | handle }}">
+                                      <a href="javascript:void(0)" title="{{ imageColor }}" style="background-color: {{ imageColor }}">
+                                          <img class="img-responsive" alt="{{ tag | remove_first: groupTagTitle | remove_first: '_' | escape }}" src="{{ colorImage | file_img_url:'master' }}"  onError="this.onerror=null;this.src='{{'color_default.png' | asset_img_url: 'icon'}}';" />
+                                      </a>
+                                  </li>
+                              {%- else -%}
+                                  {%- if current_tags contains tag -%}
+                                      <li class="filterItem active" data-filter="{{ tag | handle }}">
+                                          {{ tag | remove_first: groupTagTitle | remove_first: '_' | link_to_remove_tag: tag }}
+                                      </li>
+                                  {%- else -%}
+                                      <li class="filterItem" data-filter="{{ tag | handle }}">
+                                          {{ tag | remove_first: groupTagTitle | remove_first: '_' | link_to_add_tag: tag }}
+                                      </li>
+                                  {%- endif -%}
+                              {%- endif -%}
+                          {%- endif -%}
+                      {% endfor %}
+                  </ul>
+              </div>
+          {% endfor %}
+      </div>
+  </div>
+
+{%- endif -%}
+
+<!-- Sidebarfilter end -->
+
+<!-- JS FILTER SCRIPT -->
+<!-- REFRESHES PAGE -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+  /* Product Tag & Collection Filters - Good for any number of filters on any type of collection pages */
+  /* Give you product tag filter select element a class of coll-filter */
+  /* Give your collection select a class of coll-picker */
+  /* Brought to you by Caroline Schnapp */
+  var allFilters = jQuery('.coll-filter, .coll-picker');
+  allFilters.change(function() {
+    var newTags = [];
+    jQuery('.coll-filter').each(function() { 
+      if (jQuery(this).val()) {
+        newTags.push(jQuery(this).val());
+      }
+    });
+    if (newTags.length) {
+      var query = newTags.join('+');
+      if (jQuery('.coll-picker').length) {
+        window.location.href = '/collections/' + jQuery('.coll-picker').val() + '/' + query;
+      }
+      else {
+        window.location.href = jQuery('{{ 'tag' | link_to_tag: 'tag' }}').attr('href').replace('tag', query);
+      }
+    } 
+    else {
+      if (jQuery('.coll-picker').length) {
+        window.location.href = '/collections/' + jQuery('.coll-picker').val();
+      }
+      else {
+        {% if collection.handle %}
+        window.location.href = '/collections/{{ collection.handle }}';
+        {% elsif collection.products.first.type == collection.title %}
+        window.location.href = '{{ collection.title | url_for_type }}';
+        {% elsif collection.products.first.vendor == collection.title %}
+        window.location.href = '{{ collection.title | url_for_vendor }}';
+        {% endif %}
+      }
+    }
+  });
+</script>
+{% schema %}
+{
+  "name": "Collection List - Tabs",
+  "tag": "section",
+  "class": "section section-collection-list",
+  "max_blocks": 15,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "default": "Collections with tabs",
+      "label": "t:sections.collection-list.settings.title.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "t:sections.all.heading_size.options__1.label"
+        },
+        {
+          "value": "h1",
+          "label": "t:sections.all.heading_size.options__2.label"
+        },
+        {
+          "value": "h0",
+          "label": "t:sections.all.heading_size.options__3.label"
+        }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.collection-list.settings.image_ratio.options__1.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.collection-list.settings.image_ratio.options__2.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.collection-list.settings.image_ratio.options__3.label"
+        }
+      ],
+      "default": "square",
+      "label": "t:sections.collection-list.settings.image_ratio.label",
+      "info": "t:sections.collection-list.settings.image_ratio.info"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.collection-list.settings.columns_desktop.label"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "t:sections.all.colors.accent_1.label"
+        },
+        {
+          "value": "accent-2",
+          "label": "t:sections.all.colors.accent_2.label"
+        },
+        {
+          "value": "background-1",
+          "label": "t:sections.all.colors.background_1.label"
+        },
+        {
+          "value": "background-2",
+          "label": "t:sections.all.colors.background_2.label"
+        },
+        {
+          "value": "inverse",
+          "label": "t:sections.all.colors.inverse.label"
+        }
+      ],
+      "default": "background-1",
+      "label": "t:sections.all.colors.label",
+      "info": "t:sections.all.colors.has_cards_info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "default": false,
+      "label": "t:sections.collection-list.settings.show_view_all.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.collection-list.settings.header_mobile.content"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:sections.collection-list.settings.columns_mobile.options__1.label"
+        },
+        {
+          "value": "2",
+          "label": "t:sections.collection-list.settings.columns_mobile.options__2.label"
+        }
+      ],
+      "default": "1",
+      "label": "t:sections.collection-list.settings.columns_mobile.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "swipe_on_mobile",
+      "default": false,
+      "label": "t:sections.collection-list.settings.swipe_on_mobile.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "featured_collection",
+      "name": "t:sections.collection-list.blocks.featured_collection.name",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.collection-list.blocks.featured_collection.settings.collection.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.collection-list.presets.name",
+      "blocks": [
+        {
+          "type": "featured_collection"
+        },
+        {
+          "type": "featured_collection"
+        },
+        {
+          "type": "featured_collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
