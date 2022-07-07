@@ -1,0 +1,12 @@
+{
+  "sections": {
+    "collections-tabs": {
+      "type": "collections-tabbed",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "collections-tabs"
+  ]
+}
